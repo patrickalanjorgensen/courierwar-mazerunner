@@ -4,8 +4,10 @@ for example I want to start with a loading screen and then have person a place t
 then person b place their bombs */
 
 
-int Xposition = 50;
-int Yposition = 50;
+// location of player
+int playerX = 50;
+int playerY = 50;
+int playerSize = 25;
 int[][] bombArray;
 
 //for some reason couldn't put in mouse pressed 
@@ -20,7 +22,7 @@ int cellWidth = 50;
 
 void setup() {
     bombArray = new int[gridSizeInt][gridSizeInt]; // Create
-    size(gridSizePixels, gridSizePixels);
+    size(500, 500);
     background(0);    
     stroke(0,0,255);
 }
@@ -34,28 +36,27 @@ void draw() {
       line(25, x, 475, x); 
     }
     fill(255,0,0);
-    ellipse(Xposition, Yposition, 50, 50);
+    ellipse(playerX, playerY, playerSize, playerSize);
     
     // draw bombs
     for(int i = 1; i < 10; i++) {
       for(int j = 1; j < 10; j++) {
         if(bombArray[i - 1][j - 1] == 1) {
           fill(0);
-          int bombY = j*50;
-          int bombX = i*50;
-          /*
-          if(bombY == Xposition && bombX == Yposition) { // track a collision between a bomb and the prayer
+          int bombX = j*50;
+          int bombY = i*50;
+          
+          if(bombX == playerX && bombY == playerY) { // track a collision between a bomb and the prayer
              if(bombArray[rowdex][coldex] == 1) { //erase the bomb
                 //if true set to false/false set to true
                   bombArray[rowdex][coldex] = 0;
-              }
-             else {
+              } else {
                   bombArray[rowdex][coldex] = 1;
               }
-              Xposition = 50;
-              Yposition = 50;
-          } */
-          ellipse(bombY, bombX, 25, 25);
+              playerReset();
+          } 
+          fill(0);
+          ellipse(bombX, bombY, 25, 25);
         }
       }
     }
@@ -66,17 +67,17 @@ void draw() {
 void keyPressed() {
   if (key == CODED) {
     if (keyCode == UP) {
-      Yposition = Yposition - 50;
+      playerY = playerY - 50;
     } else if (keyCode == DOWN) {
-      Yposition = Yposition + 50;
+      playerY = playerY + 50;
     } 
     else if (keyCode == LEFT) {
-      Xposition = Xposition - 50;
+      playerX = playerX - 50;
     } else if (keyCode == RIGHT) {
-      Xposition = Xposition + 50;
+      playerX = playerX + 50;
     } 
   } else {
-   // fillVal = 126;
+   print("player movement error");
   }
   redraw();
 }
@@ -106,3 +107,11 @@ void mousePressed() {
   }
   redraw();
 } 
+
+void playerReset() {
+  playerX = 50;
+  playerY = 50;
+  fill(255,0,0);
+  ellipse(playerX, playerY, playerSize, playerSize);
+  redraw();
+}
