@@ -32,10 +32,25 @@ void draw() {
     ellipse(Xposition, Yposition, 50, 50);
     
     // draw bombs
-    for(int i = 1; i < 9; i++) {
-      for(int j = 1; j < 9; j++) {
-        if(bombArray[i - 1][j -1] == 1) {
-          ellipse(i*50 + 25, j*50 + 25, 25, 25);
+    for(int i = 1; i < 10; i++) {
+      for(int j = 1; j < 10; j++) {
+        if(bombArray[i - 1][j - 1] == 1) {
+          fill(0);
+          int bombY = j*50;
+          int bombX = i*50;
+          /*
+          if(bombY == Xposition && bombX == Yposition) { // track a collision between a bomb and the prayer
+             if(bombArray[rowdex][coldex] == 1) { //erase the bomb
+                //if true set to false/false set to true
+                  bombArray[rowdex][coldex] = 0;
+              }
+             else {
+                  bombArray[rowdex][coldex] = 1;
+              }
+              Xposition = 50;
+              Yposition = 50;
+          } */
+          ellipse(bombY, bombX, 25, 25);
         }
       }
     }
