@@ -34,6 +34,9 @@ void draw() {
     // draw bombs
     for(int i = 1; i < 9; i++) {
       for(int j = 1; j < 9; j++) {
+        if(bombArray[i - 1][j -1] == 1) {
+          ellipse(i*50 + 25, j*50 + 25, 25, 25);
+        }
       }
     }
     noLoop();
