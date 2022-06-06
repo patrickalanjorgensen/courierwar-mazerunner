@@ -12,21 +12,22 @@ int[][] bombArray;
 int rowdex = 100;
 int coldex = 100;
 
-int maxHeight = 9;
+int gridSizeInt = 9;
+int gridSizePixels = 500;
 int paddingWidth = 25;
-int colwidth = 50;
+int cellWidth = 50;
 
 
 void setup() {
-    bombArray = new int[9][9]; // Create
-    size(500, 500);
+    bombArray = new int[gridSizeInt][gridSizeInt]; // Create
+    size(gridSizePixels, gridSizePixels);
     background(0);    
     stroke(0,0,255);
 }
 
 void draw() {
     fill(255);
-    rect(25, 25, 450, 450);
+    rect(paddingWidth, paddingWidth, 450, 450);
     for(int i = 1; i < 9; i++) {
       int x = i*50 + 25;
       line(x, 25, x, 475);
@@ -83,30 +84,25 @@ void keyPressed() {
 
 void mousePressed() {
   // goal is to map the locations of each mouse press to a square in the grid
-  // if mouse y is less than 76 than we're dealing with the first row and + 50 and so on
-    for(int i = maxHeight; i >= 0; i--) {
-      if(mouseY < i * colwidth + paddingWidth) {
+    for(int i = gridSizeInt; i >= 0; i--) {
+      if(mouseY < i * cellWidth + paddingWidth) {
       } else {
         rowdex = i;
         break;
       }
     }
-    
-    for(int i = maxHeight; i >= 0; i--) {
-      if(mouseX < i * colwidth + paddingWidth) {
+    for(int i = gridSizeInt; i >= 0; i--) {
+      if(mouseX < i * cellWidth + paddingWidth) {
       } else {
         coldex = i;
         break;
       }
     }
-    
-  if(bombArray[rowdex][coldex] == 1) {
-    //if true set to false/false set to true
+
+  if(bombArray[rowdex][coldex] == 1) {     //if true set to false/false set to true
     bombArray[rowdex][coldex] = 0;
-  }
-  else {
+  } else {
     bombArray[rowdex][coldex] = 1;
   }
   redraw();
-
 } 
