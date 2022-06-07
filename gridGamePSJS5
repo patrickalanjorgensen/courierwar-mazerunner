@@ -41,6 +41,13 @@ var bombsLeft = totalBombs;
 var player1Intent = 0;
 var player2Intent = 0;
 
+//vars having to do with the first gameState
+var startButtonX = 40
+var startButtonY = 50
+var startButtonW = 70
+var startButtonH = 50
+
+
 function setup() {
     createCanvas(700, 600);
     background(0);    
@@ -50,15 +57,15 @@ function setup() {
 
 
 function draw() {
+ 
     background(0);
     if(gameState == 0) {
-      fill(255);
-      text("Welcome to: insert name here!",10,30);
-
+       gameState0()
     } else {
+    
     drawGrid();
-    //drawPlayer(player1X, player1Y);
-    //drawPlayer(player2X, player2Y);
+    drawPlayer(player1X, player1Y);
+    drawPlayer(player2X, player2Y);
     drawBombs();  
     fill(255);
     text("player 1 place your bombs!",10,30);
@@ -66,19 +73,35 @@ function draw() {
     }
 }
 
+function gameState0() {
+   fill(255);
+   text("Welcome!",10,30);
+   
+   drawButton("Start!", startButtonX, startButtonY, startButtonW, startButtonH)
+}
 
+function drawButton(bText, locationX, locationY, bWidth, bHeight) {
+  fill(0,255,0)
+  rect(locationX, locationY, bWidth, bHeight)
+  fill(255);
+  text("Start!",locationX + bWidth/4,locationY + bHeight/2);
+
+}
 
 function mousePressed() {
 
 } 
 
 function mouseReleased() {
-  if(gameState == 0) {
+  if(gameState == 0 && mouseX > startButtonX && 
+  mouseX < startButtonX + startButtonW && 
+  mouseY > startButtonY && mouseY < startButtonY + startButtonH) {
     startButtonClicked() 
   }
 }
 
 function startButtonClicked() {
+  print("button clicked");
 }
 
 function playerReset() {
