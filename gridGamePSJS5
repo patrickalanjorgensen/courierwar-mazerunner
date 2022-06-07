@@ -1,0 +1,360 @@
+//Initial Creation 6/5/22
+/* here I will try to create the different states of the game - 
+for example I want to start with a loading screen and then have person a place there bombs 
+then person b place their bombs */
+
+var gameState = 0;
+/*
+0: spash, transition on: press start
+1: ready to place bombs p1: press enter
+2: p1 placing transition on: transition on timer
+3: ready to place bombs p2: enter
+4: p2 placing: timer
+5: ready to race?: endter
+6: racing! transition: win
+7: results: play again button
+*/
+
+// location of player
+var player1X = 0;
+var player1Y = 0;
+var player2X = 0;
+var player2Y = 0;
+
+//for some reason couldn't put in mouse pressed 
+// bombs
+var rowdex = -1;
+var coldex = -1;
+
+var gridWidth = 13;
+var gridHeight = 13;
+var cellSize = 30;
+var playerSize = cellSize/2;
+var bombArray = [...Array(gridWidth)].map(e => Array(gridHeight).fill(0));
+console.log(bombArray)
+
+var gridX = 25;
+var gridY = 80;
+
+var totalBombs = 10;
+var bombsLeft = totalBombs;
+var player1Intent = 0;
+var player2Intent = 0;
+
+function setup() {
+    createCanvas(700, 600);
+    background(0);    
+    stroke(0,0,255);
+}
+
+
+
+function draw() {
+    background(0);
+    if(gameState == 0) {
+      fill(255);
+      text("Welcome to: insert name here!",10,30);
+
+    } else {
+    drawGrid();
+    //drawPlayer(player1X, player1Y);
+    //drawPlayer(player2X, player2Y);
+    drawBombs();  
+    fill(255);
+    text("player 1 place your bombs!",10,30);
+    text("bombs left:" + bombsLeft, gridX + cellSize * gridWidth + 50, gridY + 50);
+    }
+}
+
+
+
+function mousePressed() {
+
+} 
+
+function mouseReleased() {
+  if(gameState == 0) {
+    startButtonClicked() 
+  }
+}
+
+function startButtonClicked() {
+}
+
+function playerReset() {
+  playerX = 50;
+  playerY = 50;
+  fill(255,0,0);
+  ellipse(playerX, playerY, playerSize, playerSize);
+}
+
+function drawPlayer(thisX, thisY) {
+  fill(255,0,0);
+  ellipse(thisX * cellSize + gridX + cellSize/2, thisY * cellSize + gridY + cellSize/2, playerSize, playerSize);
+}
+
+function drawGrid() {
+    fill(255);
+    rect(gridX, gridY, cellSize * gridWidth, cellSize * gridHeight);
+    for(var i = 1; i < gridHeight; i++) {
+      var y = i*cellSize + gridY;
+      line(gridX, y, cellSize * gridWidth + gridX, y); 
+    }
+    for(i = 1; i < gridWidth; i++) {
+      var x = i*cellSize + gridX;
+      line(x, gridY, x, cellSize * gridHeight + gridY);
+    }
+  
+}
+
+function drawBombs() {
+   for(var i = 0; i < gridHeight; i++) {
+      for(var j = 0; j < gridWidth; j++) {
+        if(bombArray[i][j] == 1) {
+          fill(0);
+          var bombX = j*cellSize + gridX + cellSize/2;
+          var bombY = i*cellSize + gridY + cellSize/2;
+          
+          //if(bombX == playerX && bombY == playerY) { // track a collision between a bomb and the prayer
+          //   if(bombArray[rowdex][coldex] == 1) { //erase the bomb
+          //      //if true set to false/false set to true
+          //        bombArray[rowdex][coldex] = 0;
+          //    } else {
+          //        bombArray[rowdex][coldex] = 1;
+          //    }
+          //    playerReset();
+          //} 
+          fill(0);
+          ellipse(bombX, bombY, playerSize, playerSize);
+        }
+      }
+    }
+}
+
+function checkBombPlace() {
+    rowdex = -1;
+  coldex = -1;
+  var i = 1;
+  // goal is to map the locations of each mouse press to a square in the grid
+    for(i = 1; i <= gridHeight; i++) {
+      if((mouseY < i * cellSize + gridY) && mouseY > gridY) {
+        rowdex = i - 1;
+        break;
+      }
+    }
+    for(i = 1; i <= gridWidth; i++) {
+      if((mouseX < i * cellSize + gridX) && mouseX > gridX) {
+        coldex = i - 1;
+        break;
+      }
+    }
+  if(rowdex >= 0 && coldex >= 0){
+  if(bombArray[rowdex][coldex] == 1) {     //if true set to false/false set to true
+    // deleting bomb
+    bombsLeft++;
+    bombArray[rowdex][coldex] = 0;
+    } else { 
+    // adding a bomb
+    if(bombsLeft > 0) {
+    bombsLeft--;
+    bombArray[rowdex][coldex] = 1;
+    }
+  }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//////////////////////////////////////
+// KEY PRESSING LOGIC
+//////////////////////////////////////
+
+
+
+
+
+function keyPressed() {
+  checkPlayer1Move();
+  checkPlayer2Move();
+}
+  
+  
+  
+ var player1Timer
+ var tickRate = 250
+ 
+ function checkPlayer1Move() {
+  print(key);
+  if (keyCode == UP_ARROW  || keyCode == DOWN_ARROW  || keyCode == LEFT_ARROW || keyCode == RIGHT_ARROW) {
+    if (keyCode == UP_ARROW && player1Y != 0) {
+              player1Y--;
+      if (player1Intent == 0) {
+        player1Intent = 1
+        player1Timer = setInterval(player1Tick, tickRate); 
+      }
+    } else if (keyCode == DOWN_ARROW && player1Y != gridHeight - 1) {
+            player1Y++;
+       if (player1Intent == 0) {
+        player1Intent = 3 
+        player1Timer = setInterval(player1Tick, tickRate); 
+      }
+    } 
+    else if (keyCode == LEFT_ARROW && player1X != 0) {
+            player1X--;
+
+       if (player1Intent == 0) {
+        player1Intent = 4 
+        player1Timer = setInterval(player1Tick, tickRate); 
+      }
+    } else if (keyCode == RIGHT_ARROW && player1X != gridWidth - 1) {
+                    player1X++;
+
+      if (player1Intent == 0) {
+        player1Intent = 2 
+        player1Timer = setInterval(player1Tick, tickRate); 
+      }
+    } 
+  }
+ }
+   
+  var player2Timer
+  function checkPlayer2Move() {
+  print(key);
+  if (key == 'w'  || key == 's'  || key == 'a' || key == 'd') {
+    if (key == 'w' && player2Y != 0) {
+        player2Y--;
+      if (player2Intent == 0) {
+        player2Intent = 1
+        player2Timer = setInterval(player2Tick, tickRate); 
+      }
+    } else if (key == 's' && player2Y != gridHeight - 1) {
+            player2Y++;
+       if (player2Intent == 0) {
+        player2Intent = 3 
+        player2Timer = setInterval(player2Tick, tickRate); 
+      }
+    } 
+    else if (key == 'a' && player2X != 0) {
+        player2X--;
+       if (player2Intent == 0) {
+        player2Intent = 4 
+        player2Timer = setInterval(player2Tick, tickRate); 
+      }
+    } else if (key == 'd' && player2X != gridWidth - 1) {
+                    player2X++;
+      if (player2Intent == 0) {
+        player2Intent = 2 
+        player2Timer = setInterval(player2Tick, tickRate); 
+      }
+    } 
+  }
+ }
+ 
+
+function keyReleased() {
+  if ((keyCode == UP_ARROW && player1Intent == 1)  || 
+     (keyCode == RIGHT_ARROW && player1Intent == 2) ||
+     (keyCode == DOWN_ARROW && player1Intent == 3) ||
+     (keyCode == LEFT_ARROW && player1Intent == 4)) {
+    print("RELEASED: " + keyCode)
+    player1Intent = 0;
+    clearInterval(player1Timer)
+   }
+   
+   if ((key == 'w' && player2Intent == 1)  || 
+     (key == 'd' && player2Intent == 2) ||
+     (key == 's' && player2Intent == 3) ||
+     (key == 'a' && player2Intent == 4)) {
+    print("RELEASED: " + keyCode)
+    player2Intent = 0;
+    clearInterval(player2Timer)
+   }
+}
+
+
+
+function player1Tick() {
+  print("I'M TICKING");
+  if (player1Intent != 0) {
+     switch (player1Intent) {
+       case 1: 
+         if (player1Y != 0) {
+           player1Y--;
+         }
+         break;
+       case 2: 
+              if (player1X != gridWidth - 1) {
+         player1X++;
+              }
+         break;
+       case 3: 
+       if (player1Y != gridHeight - 1) {
+         player1Y++;
+       }
+         break;
+       case 4: 
+          if (player1X != 0) {
+           player1X--;
+          }
+         break;
+     }
+  }
+}
+
+function player2Tick() {
+  print("I'M TICKING PLAYER 2");
+  if (player2Intent != 0) {
+     switch (player2Intent) {
+       case 1: 
+         if (player2Y != 0) {
+           player2Y--;
+         }
+         break;
+       case 2: 
+              if (player2X != gridWidth - 1) {
+         player2X++;
+              }
+         break;
+       case 3: 
+       if (player2Y != gridHeight - 1) {
+         player2Y++;
+       }
+         break;
+       case 4: 
+          if (player2X != 0) {
+           player2X--;
+          }
+         break;
+     }
+  }
+}
+
+
+
+
+
+
