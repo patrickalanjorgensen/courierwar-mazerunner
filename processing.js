@@ -5,46 +5,45 @@ then person b place their bombs */
 
 
 // location of player
-int playerX = 50;
-int playerY = 50;
-int playerSize = 25;
+int playerX = 0;
+int playerY = 0;
 int[][] bombArray;
 
 //for some reason couldn't put in mouse pressed 
-int rowdex = 100;
-int coldex = 100;
+// bombs
+int rowdex = -1;
+int coldex = -1;
 
-int gridSizeInt = 9;
-int gridSizePixels = 500;
-int paddingWidth = 25;
-int cellWidth = 50;
+int gridWidth = 13;
+int gridHeight = 13;
+int cellSize = 50;
+int playerSize = cellSize/2;
+
+
+int gridX = 250;
+int gridY = 200;
 
 
 void setup() {
-    bombArray = new int[gridSizeInt][gridSizeInt]; // Create
-    size(500, 500);
+    bombArray = new int[gridHeight][gridWidth]; // Create
+    size(1000, 1000);
     background(0);    
     stroke(0,0,255);
 }
 
 void draw() {
-    fill(255);
-    rect(paddingWidth, paddingWidth, 450, 450);
-    for(int i = 1; i < 9; i++) {
-      int x = i*50 + 25;
-      line(x, 25, x, 475);
-      line(25, x, 475, x); 
-    }
+    background(0);
+    drawGrid();
     fill(255,0,0);
-    ellipse(playerX, playerY, playerSize, playerSize);
+    ellipse(playerX * cellSize + gridX + cellSize/2, playerY * cellSize + gridY + cellSize/2, playerSize, playerSize);
     
     // draw bombs
-    for(int i = 1; i < 10; i++) {
-      for(int j = 1; j < 10; j++) {
-        if(bombArray[i - 1][j - 1] == 1) {
+    for(int i = 0; i < gridHeight; i++) {
+      for(int j = 0; j < gridWidth; j++) {
+        if(bombArray[i][j] == 1) {
           fill(0);
-          int bombX = j*50;
-          int bombY = i*50;
+          int bombX = j*cellSize + gridX + cellSize/2;
+          int bombY = i*cellSize + gridY + cellSize/2;
           
           if(bombX == playerX && bombY == playerY) { // track a collision between a bomb and the prayer
              if(bombArray[rowdex][coldex] == 1) { //erase the bomb
@@ -60,21 +59,21 @@ void draw() {
         }
       }
     }
-    noLoop();
+    //noLoop();
   
 }
 
 void keyPressed() {
   if (key == CODED) {
-    if (keyCode == UP) {
-      playerY = playerY - 50;
-    } else if (keyCode == DOWN) {
-      playerY = playerY + 50;
+    if (keyCode == UP && playerY != 0) {
+      playerY--;
+    } else if (keyCode == DOWN && playerY != gridHeight - 1) {
+      playerY++;
     } 
-    else if (keyCode == LEFT) {
-      playerX = playerX - 50;
-    } else if (keyCode == RIGHT) {
-      playerX = playerX + 50;
+    else if (keyCode == LEFT && playerX != 0) {
+      playerX--;
+    } else if (keyCode == RIGHT && playerX != gridWidth - 1) {
+      playerX++;
     } 
   } else {
    print("player movement error");
@@ -85,17 +84,15 @@ void keyPressed() {
 
 void mousePressed() {
   // goal is to map the locations of each mouse press to a square in the grid
-    for(int i = gridSizeInt; i >= 0; i--) {
-      if(mouseY < i * cellWidth + paddingWidth) {
-      } else {
-        rowdex = i;
+    for(int i = 1; i <= gridHeight; i++) {
+      if(mouseY < i * cellSize + gridY) {
+        rowdex = i - 1;
         break;
       }
     }
-    for(int i = gridSizeInt; i >= 0; i--) {
-      if(mouseX < i * cellWidth + paddingWidth) {
-      } else {
-        coldex = i;
+    for(int i = 1; i <= gridWidth; i++) {
+      if(mouseX < i * cellSize + gridX) {
+        coldex = i - 1;
         break;
       }
     }
@@ -114,4 +111,18 @@ void playerReset() {
   fill(255,0,0);
   ellipse(playerX, playerY, playerSize, playerSize);
   redraw();
+}
+
+void drawGrid() {
+    fill(255);
+    rect(gridX, gridY, cellSize * gridWidth, cellSize * gridHeight);
+    for(int i = 1; i < gridHeight; i++) {
+      int y = i*cellSize + gridY;
+      line(gridX, y, cellSize * gridWidth + gridX, y); 
+    }
+    for(int i = 1; i < gridWidth; i++) {
+      int x = i*cellSize + gridX;
+      line(x, gridY, x, cellSize * gridHeight + gridY);
+    }
+  
 }
