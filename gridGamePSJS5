@@ -62,8 +62,8 @@ console.log(bombArray)
 var gridX = 25;
 var gridY = 80;
 
-var gridX2 = 25;
-var gridY2 = 200;
+var gridX2 = 700;
+var gridY2 = 80;
 
 var totalBombs = 10;
 var bombsLeft = totalBombs;
@@ -87,7 +87,7 @@ var bombButtonW = 70
 var bombButtonH = 35
 
 function setup() {
-    createCanvas(700, 600);
+    createCanvas(1400, 600);
     background(0);    
     stroke(0,0,255);
     frameRate(30)
@@ -208,7 +208,7 @@ function gameState6() {
     
     //player 2
     drawGrid2()
-   // drawBombs2()
+    drawBombs2()
 }
 
 function drawButton(bText, bColor, locationX, locationY, bWidth, bHeight) {
@@ -366,8 +366,8 @@ function drawBombs2() {
       for(var j = 0; j < gridWidth; j++) {
         if(bombArray[i][j] == 1) {
           fill(0);
-          var bombX = j*cellSize + gridX + cellSize/2;
-          var bombY = i*cellSize + gridY + cellSize/2;
+          var bombX2 = j*cellSize + gridX2 + cellSize/2;
+          var bombY2 = i*cellSize + gridY2 + cellSize/2;
           
           //if(bombX == playerX && bombY == playerY) { // track a collision between a bomb and the prayer
           //   if(bombArray[rowdex][coldex] == 1) { //erase the bomb
@@ -379,7 +379,7 @@ function drawBombs2() {
           //    playerReset();
           //} 
           fill(0);
-          ellipse(bombX, bombY, playerSize, playerSize);
+          ellipse(bombX2, bombY2, playerSize, playerSize);
         }
       }
     }
