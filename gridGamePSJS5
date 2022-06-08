@@ -22,6 +22,12 @@ fill(0);
 
 */
 
+window.addEventListener("keydown", function(e) {
+    if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].indexOf(e.code) > -1) {
+        e.preventDefault();
+    }
+}, false); 
+
 let timeLimit = 5;
 let countdown;
 
@@ -62,7 +68,7 @@ console.log(bombArray)
 var gridX = 25;
 var gridY = 80;
 
-var gridX2 = 700;
+var gridX2 = 500;
 var gridY2 = 80;
 
 var totalBombs = 10;
@@ -205,10 +211,12 @@ function gameState6() {
     //player1 
     drawGrid();
     drawBombs();  
+    drawPlayer(player1X, player1Y);
     
     //player 2
     drawGrid2()
     drawBombs2()
+    drawPlayer2(player2X, player2Y);
 }
 
 function drawButton(bText, bColor, locationX, locationY, bWidth, bHeight) {
@@ -261,7 +269,13 @@ function mouseReleased() {
     bombArray = bombArray2
   }
   if(gameState == 5) {
-    timer()
+    //timer()
+    var tempX = gridX2;
+    var tempY = gridY2;
+    gridX2 = gridX;
+    gridY2 = gridY;
+    gridX = tempX;
+    gridY = tempY
   }
   
 }
@@ -290,16 +304,26 @@ function begin2ButtonClicked() {
   print("button3 clicked");
 }
 
-function playerReset() {
-  playerX = 50;
-  playerY = 50;
-  fill(255,0,0);
-  ellipse(playerX, playerY, playerSize, playerSize);
+function player1Reset() {
+  player1X = 0;
+  player1Y = 0;
+  drawPlayer(player1X, player1Y);
+}
+
+function player2Reset() {
+  player2X = 0;
+  player2Y = 0;
+  drawPlayer(player2X, player2Y);
 }
 
 function drawPlayer(thisX, thisY) {
   fill(255,0,0);
   ellipse(thisX * cellSize + gridX + cellSize/2, thisY * cellSize + gridY + cellSize/2, playerSize, playerSize);
+}
+
+function drawPlayer2(thisX, thisY) {
+  fill(255,0,0);
+  ellipse(thisX * cellSize + gridX2 + cellSize/2, thisY * cellSize + gridY2 + cellSize/2, playerSize, playerSize);
 }
 
 function drawGrid() {
@@ -343,15 +367,16 @@ function drawBombs() {
           var bombX = j*cellSize + gridX + cellSize/2;
           var bombY = i*cellSize + gridY + cellSize/2;
           
-          //if(bombX == playerX && bombY == playerY) { // track a collision between a bomb and the prayer
-          //   if(bombArray[rowdex][coldex] == 1) { //erase the bomb
-          //      //if true set to false/false set to true
-          //        bombArray[rowdex][coldex] = 0;
-          //    } else {
-          //        bombArray[rowdex][coldex] = 1;
-          //    }
-          //    playerReset();
-          //} 
+          if(bombX == player1X && bombY == player1Y) { // track a collision between a bomb and the prayer
+             if(bombArray[rowdex][coldex] == 1) { //erase the bomb
+                //if true set to false/false set to true
+                  bombArray[rowdex][coldex] = 0;
+              } else {
+                  bombArray[rowdex][coldex] = 1;
+              }
+              //player1Reset();
+          } 
+          // end collision tracking
           fill(0);
           ellipse(bombX, bombY, playerSize, playerSize);
         }
@@ -360,29 +385,31 @@ function drawBombs() {
 }
 
 function drawBombs2() {
-   bombArray = bombArray2
-  
-   for(var i = 0; i < gridHeight; i++) {
-      for(var j = 0; j < gridWidth; j++) {
-        if(bombArray[i][j] == 1) {
-          fill(0);
-          var bombX2 = j*cellSize + gridX2 + cellSize/2;
-          var bombY2 = i*cellSize + gridY2 + cellSize/2;
-          
-          //if(bombX == playerX && bombY == playerY) { // track a collision between a bomb and the prayer
-          //   if(bombArray[rowdex][coldex] == 1) { //erase the bomb
-          //      //if true set to false/false set to true
-          //        bombArray[rowdex][coldex] = 0;
-          //    } else {
-          //        bombArray[rowdex][coldex] = 1;
-          //    }
-          //    playerReset();
-          //} 
-          fill(0);
-          ellipse(bombX2, bombY2, playerSize, playerSize);
-        }
+ bombArray = bombArray2
+
+ for(var i = 0; i < gridHeight; i++) {
+    for(var j = 0; j < gridWidth; j++) {
+      if(bombArray[i][j] == 1) {
+        fill(0);
+        var bombX = j*cellSize + gridX2 + cellSize/2;
+        var bombY = i*cellSize + gridY2 + cellSize/2;
+        
+        fill(0);
+        ellipse(bombX, bombY, playerSize, playerSize);
       }
     }
+  }
+}
+
+function deleteBomb(locationX, locationY, whichBombArray) {
+  switch(whichBombArray) {
+    case 1:
+      bombArray1[locationX][locationY] = 0;
+      break;
+    case 2:
+      bombArray2[locationX][locationY] = 0;
+      break;
+  }
 }
 
 function checkBombPlace() {
@@ -415,6 +442,7 @@ function checkBombPlace() {
     }
   }
   }
+  print("success")
 }
 
 
@@ -492,27 +520,27 @@ function keyPressed() {
   print(key);
   if (keyCode == UP_ARROW  || keyCode == DOWN_ARROW  || keyCode == LEFT_ARROW || keyCode == RIGHT_ARROW) {
     if (keyCode == UP_ARROW && player1Y != 0) {
-              player1Y--;
+              movePlayer1(1);
       if (player1Intent == 0) {
         player1Intent = 1
         player1Timer = setInterval(player1Tick, tickRate); 
       }
     } else if (keyCode == DOWN_ARROW && player1Y != gridHeight - 1) {
-            player1Y++;
+            movePlayer1(3);
        if (player1Intent == 0) {
         player1Intent = 3 
         player1Timer = setInterval(player1Tick, tickRate); 
       }
     } 
     else if (keyCode == LEFT_ARROW && player1X != 0) {
-            player1X--;
+            movePlayer1(4);
 
        if (player1Intent == 0) {
         player1Intent = 4 
         player1Timer = setInterval(player1Tick, tickRate); 
       }
     } else if (keyCode == RIGHT_ARROW && player1X != gridWidth - 1) {
-                    player1X++;
+            movePlayer1(2);
 
       if (player1Intent == 0) {
         player1Intent = 2 
@@ -581,28 +609,7 @@ function keyReleased() {
 function player1Tick() {
   print("I'M TICKING");
   if (player1Intent != 0) {
-     switch (player1Intent) {
-       case 1: 
-         if (player1Y != 0) {
-           player1Y--;
-         }
-         break;
-       case 2: 
-              if (player1X != gridWidth - 1) {
-         player1X++;
-              }
-         break;
-       case 3: 
-       if (player1Y != gridHeight - 1) {
-         player1Y++;
-       }
-         break;
-       case 4: 
-          if (player1X != 0) {
-           player1X--;
-          }
-         break;
-     }
+    movePlayer1(player1Intent)
   }
 }
 
@@ -633,3 +640,60 @@ function player2Tick() {
      }
   }
 }
+
+// created because should do the bomb check 
+//at the right time when there is an intention to move to a location with a bomb
+function movePlayer1(direction) {
+  print("move player 1 function is called");
+     switch (direction) {
+       case 1: 
+         if (player1Y != 0) {
+           if (bombArray1[player1X][player1Y - 1] == 1) {
+            // THEY ARE ABOUT TO STEP ON A BOMB! DO SOMETHING!
+            print("collision up")
+            deleteBomb(player1X, player1Y - 1, 1)
+            player1Reset();
+            player1Y--;
+           } else {
+             player1Y--;
+           }
+         }
+         break;
+       case 2: 
+         if (player1X != gridWidth - 1) {
+           if (bombArray1[player1X + 1][player1Y] == 1) {
+            deleteBomb(player1X + 1, player1Y, 1)
+            player1X++;
+            player1Reset();
+           } else {
+             player1X++; 
+           }
+         }
+         break;
+       case 3: 
+       if (player1Y != gridHeight - 1) {
+         if (bombArray1[player1X][player1Y + 1] == 1) {
+           print("inside if");
+            deleteBomb(player1X, player1Y + 1, 1)
+            player1Y++;
+            player1Reset();
+         } else {
+            player1Y++;
+         }
+       }
+         break;
+       case 4: 
+          if (player1X != 0) {
+           if (bombArray1[player1X - 1][player1Y] == 1) {
+            deleteBomb(player1X - 1, player1Y, 1)
+            player1X--;
+            player1Reset();
+           } else {
+             player1X--;
+           }
+          }
+       break;
+     }
+       
+}
+
