@@ -1,7 +1,30 @@
 //Initial Creation 6/5/22
 /* here I will try to create the different states of the game - 
 for example I want to start with a loading screen and then have person a place there bombs 
-then person b place their bombs */
+then person b place their bombs 
+let timeLimit = 5;
+let countdown;
+
+setup frameRate(30)
+
+let currentTime = int(millis() / 1000);
+countDown = timeLimit - currentTime;
+
+if(countDown < 0) {
+ countDown = 0;
+  gameState++;
+}
+
+textSize(24);
+fill(0,102, 153);
+text("TIME: " + currentTime, 30, 380);
+fill(0);
+
+*/
+
+let timeLimit = 5;
+let countdown;
+
 
 var gameState = 0;
 /*
@@ -31,6 +54,7 @@ var gridHeight = 13;
 var cellSize = 30;
 var playerSize = cellSize/2;
 var bombArray = [...Array(gridWidth)].map(e => Array(gridHeight).fill(0));
+var bombArray1 = [...Array(gridWidth)].map(e => Array(gridHeight).fill(0));
 var bombArray2 = [...Array(gridWidth)].map(e => Array(gridHeight).fill(0));
 
 console.log(bombArray)
@@ -63,6 +87,7 @@ function setup() {
     createCanvas(700, 600);
     background(0);    
     stroke(0,0,255);
+    frameRate(30)
 }
 
 
@@ -78,6 +103,12 @@ function draw() {
       gameState2()
     } else if(gameState == 3) {
       gameState3()
+    } else if(gameState == 4) {
+      gameState4()
+    } else if(gameState == 5) {
+      gameState5()
+    } else if(gameState == 6) {
+      gameState6()
     } else {
       print("gamestate error");
           drawGrid();
@@ -126,6 +157,50 @@ function gameState3() {
    
    drawButton("Begin!", "red", beginButtonX, beginButtonY, beginButtonW, beginButtonH)
 }
+
+function gameState4() {
+    drawGrid();
+    drawBombs();  
+    fill(255);
+    text("player 2 place your bombs!",10,30);
+    text("bombs left:" + bombsLeft, gridX + cellSize * gridWidth + 50, gridY + 50);
+    if(bombsLeft > 0) {
+      drawButton("Placing!", "grey", bombButtonX, bombButtonY, bombButtonW, bombButtonH)
+    } else {
+      drawButton("ready!", "red", bombButtonX, bombButtonY, bombButtonW, bombButtonH)
+    }
+}
+
+function gameState5() {
+  fill(255);
+  text("Player 1 place your fingers on WASD! Player 2 place your fingers on the arrow keys! Both players repectively press UP to begin", gridX/2, gridY/3);
+  let currentTime = int(millis() / 1000);
+  countDown = timeLimit - currentTime;
+
+if(countDown < 0) {
+ countDown = 0;
+  gameState++;
+}
+
+textSize(24);
+fill(0,102, 153);
+text("TIME: " + currentTime, 30, 70);
+
+
+}
+
+function timer() {
+    var fiveMinutes = 60 * 5,
+        display = document.querySelector('#time');
+    startTimer(fiveMinutes, display);
+}
+
+
+function gameState6() {
+  fill(255);
+  text("Reach your goal!", gridX/2, gridY/3);
+}
+
 function drawButton(bText, bColor, locationX, locationY, bWidth, bHeight) {
   if(bColor == "red") {
     fill(255, 0, 0);
@@ -145,7 +220,7 @@ function drawButton(bText, bColor, locationX, locationY, bWidth, bHeight) {
 }
 
 function mousePressed() {
-  if(gameState == 2) {
+  if(gameState == 2 | gameState == 4) {
     checkBombPlace()
   }
 } 
@@ -162,12 +237,23 @@ function mouseReleased() {
   mouseY > beginButtonY && mouseY < beginButtonY + beginButtonH) {
     begin1ButtonClicked() 
   }
-  if(gameState == 2 && mouseX > bombButtonX && 
+  if((gameState == 2 | gameState == 4) && mouseX > bombButtonX && 
   mouseX < bombButtonX + bombButtonW && 
   mouseY > bombButtonY && mouseY < bombButtonY + beginButtonH) {
     bombButtonClicked() 
   }
-
+  if(gameState == 3 && mouseX > beginButtonX && 
+  mouseX < beginButtonX + beginButtonW && 
+  mouseY > beginButtonY && mouseY < beginButtonY + beginButtonH) {
+    begin2ButtonClicked() 
+    bombsLeft = totalBombs;
+    bombArray1 = bombArray
+    bombArray = bombArray2
+  }
+  if(gameState == 5) {
+    timer()
+  }
+  
 }
 
 
@@ -182,8 +268,16 @@ function begin1ButtonClicked() {
 }
 
 function bombButtonClicked() {
+  if(gameState == 4) {
+    bombArray2 = bombArray;
+  }
   gameState++;
   print("button1 clicked");
+}
+
+function begin2ButtonClicked() {
+  gameState++;
+  print("button3 clicked");
 }
 
 function playerReset() {
@@ -241,10 +335,6 @@ function drawBombs() {
 }
 
 function checkBombPlace() {
-  if(gameState == 4) {
-    bombArray = bombArray2
-    bombsLeft = 0;
-  }
     rowdex = -1;
   coldex = -1;
   var i = 1;
@@ -280,6 +370,24 @@ function checkBombPlace() {
 
 
 
+/////
+function startTimer(duration, display) {
+    var timer = duration, minutes, seconds;
+    setInterval(function () {
+        minutes = parseInt(timer / 60, 10);
+        seconds = parseInt(timer % 60, 10);
+
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+        display.textContent = minutes + ":" + seconds;
+
+        if (--timer < 0) {
+            timer = duration;
+        }
+    }, 1000);
+}
+
 
 
 
@@ -313,6 +421,15 @@ function checkBombPlace() {
 function keyPressed() {
   checkPlayer1Move();
   checkPlayer2Move();
+  if(gameState == 5) {
+    /*
+    if(player1Intent == 1 && player2Intent == 1) {
+      gameState++;
+    } */
+    if (keyCode == UP_ARROW && keyCode == 'w') {
+      gameState++;
+    }
+  }
 }
   
   
@@ -465,9 +582,3 @@ function player2Tick() {
      }
   }
 }
-
-
-
-
-
-
