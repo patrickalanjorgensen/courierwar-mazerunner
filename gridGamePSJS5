@@ -22,6 +22,8 @@ fill(0);
 
 */
 
+/* implement bfs so that there is ensured a path to get to the final location */
+
 window.addEventListener("keydown", function(e) {
     if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].indexOf(e.code) > -1) {
         e.preventDefault();
@@ -643,17 +645,18 @@ function player2Tick() {
 
 // created because should do the bomb check 
 //at the right time when there is an intention to move to a location with a bomb
+// note had to swap the way I'm indexing from the player movement because bomb array is row column, X's are colums
 function movePlayer1(direction) {
   print("move player 1 function is called");
      switch (direction) {
        case 1: 
          if (player1Y != 0) {
-           if (bombArray1[player1X][player1Y - 1] == 1) {
+           if (bombArray1[player1Y - 1][player1X] == 1) {
             // THEY ARE ABOUT TO STEP ON A BOMB! DO SOMETHING!
             print("collision up")
-            deleteBomb(player1X, player1Y - 1, 1)
-            player1Reset();
+            //deleteBomb(player1Y - 1, player1X, 1)
             player1Y--;
+            player1Reset();
            } else {
              player1Y--;
            }
@@ -661,8 +664,9 @@ function movePlayer1(direction) {
          break;
        case 2: 
          if (player1X != gridWidth - 1) {
-           if (bombArray1[player1X + 1][player1Y] == 1) {
-            deleteBomb(player1X + 1, player1Y, 1)
+           if (bombArray1[player1Y][player1X + 1] == 1) {
+            print("collision right")
+            //deleteBomb(player1Y, player1X + 1, 1)
             player1X++;
             player1Reset();
            } else {
@@ -672,9 +676,9 @@ function movePlayer1(direction) {
          break;
        case 3: 
        if (player1Y != gridHeight - 1) {
-         if (bombArray1[player1X][player1Y + 1] == 1) {
-           print("inside if");
-            deleteBomb(player1X, player1Y + 1, 1)
+         if (bombArray1[player1Y + 1][player1X] == 1) {
+           print("collision down");
+            //deleteBomb(player1Y + 1, player1X, 1)
             player1Y++;
             player1Reset();
          } else {
@@ -684,8 +688,9 @@ function movePlayer1(direction) {
          break;
        case 4: 
           if (player1X != 0) {
-           if (bombArray1[player1X - 1][player1Y] == 1) {
-            deleteBomb(player1X - 1, player1Y, 1)
+           if (bombArray1[player1Y][player1X - 1] == 1) {
+             print("collision left")
+            //deleteBomb(player1Y, player1X - 1, 1)
             player1X--;
             player1Reset();
            } else {
