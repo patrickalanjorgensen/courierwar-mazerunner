@@ -557,26 +557,26 @@ function keyPressed() {
   print(key);
   if (key == 'w'  || key == 's'  || key == 'a' || key == 'd') {
     if (key == 'w' && player2Y != 0) {
-        player2Y--;
+        movePlayer2(1)
       if (player2Intent == 0) {
         player2Intent = 1
         player2Timer = setInterval(player2Tick, tickRate); 
       }
     } else if (key == 's' && player2Y != gridHeight - 1) {
-            player2Y++;
+           movePlayer2(3)
        if (player2Intent == 0) {
         player2Intent = 3 
         player2Timer = setInterval(player2Tick, tickRate); 
       }
     } 
     else if (key == 'a' && player2X != 0) {
-        player2X--;
+           movePlayer2(4)
        if (player2Intent == 0) {
         player2Intent = 4 
         player2Timer = setInterval(player2Tick, tickRate); 
       }
     } else if (key == 'd' && player2X != gridWidth - 1) {
-                    player2X++;
+           movePlayer2(2)
       if (player2Intent == 0) {
         player2Intent = 2 
         player2Timer = setInterval(player2Tick, tickRate); 
@@ -618,28 +618,7 @@ function player1Tick() {
 function player2Tick() {
   print("I'M TICKING PLAYER 2");
   if (player2Intent != 0) {
-     switch (player2Intent) {
-       case 1: 
-         if (player2Y != 0) {
-           player2Y--;
-         }
-         break;
-       case 2: 
-              if (player2X != gridWidth - 1) {
-         player2X++;
-              }
-         break;
-       case 3: 
-       if (player2Y != gridHeight - 1) {
-         player2Y++;
-       }
-         break;
-       case 4: 
-          if (player2X != 0) {
-           player2X--;
-          }
-         break;
-     }
+     movePlayer2(player2Intent)
   }
 }
 
@@ -702,3 +681,58 @@ function movePlayer1(direction) {
        
 }
 
+function movePlayer2(direction) {
+  print("move player 1 function is called");
+     switch (direction) {
+       case 1: 
+         if (player2Y != 0) {
+           if (bombArray2[player2Y - 1][player2X] == 1) {
+            // THEY ARE ABOUT TO STEP ON A BOMB! DO SOMETHING!
+            print("collision up")
+            //deleteBomb(player1Y - 1, player1X, 1)
+            player2Y--;
+            player2Reset();
+           } else {
+             player2Y--;
+           }
+         }
+         break;
+       case 2: 
+         if (player2X != gridWidth - 1) {
+           if (bombArray2[player2Y][player2X + 1] == 1) {
+            print("collision right")
+            //deleteBomb(player1Y, player1X + 1, 1)
+            player2X++;
+            player2Reset();
+           } else {
+             player2X++; 
+           }
+         }
+         break;
+       case 3: 
+       if (player2Y != gridHeight - 1) {
+         if (bombArray2[player2Y + 1][player2X] == 1) {
+           print("collision down");
+            //deleteBomb(player1Y + 1, player1X, 1)
+            player2Y++;
+            player2Reset();
+         } else {
+            player2Y++;
+         }
+       }
+         break;
+       case 4: 
+          if (player2X != 0) {
+           if (bombArray2[player2Y][player2X - 1] == 1) {
+             print("collision left")
+            //deleteBomb(player1Y, player1X - 1, 1)
+            player2X--;
+            player2Reset();
+           } else {
+             player2X--;
+           }
+          }
+       break;
+     }
+       
+}
