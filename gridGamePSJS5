@@ -62,6 +62,9 @@ console.log(bombArray)
 var gridX = 25;
 var gridY = 80;
 
+var gridX2 = 25;
+var gridY2 = 200;
+
 var totalBombs = 10;
 var bombsLeft = totalBombs;
 var player1Intent = 0;
@@ -133,7 +136,7 @@ function gameState1() {
    text("Player 1 press Begin! to place your bombs!", gridX/2, gridY/3);
    text("You have 30 seconds!", gridX/2, gridY/3 + 30);
    
-   drawButton("Begin!", "red", beginButtonX, beginButtonY, beginButtonW, beginButtonH)
+   drawButton("Begin!", "green", beginButtonX, beginButtonY, beginButtonW, beginButtonH)
 }
 
 function gameState2() {
@@ -145,7 +148,7 @@ function gameState2() {
     if(bombsLeft > 0) {
       drawButton("Placing!", "grey", bombButtonX, bombButtonY, bombButtonW, bombButtonH)
     } else {
-      drawButton("ready!", "red", bombButtonX, bombButtonY, bombButtonW, bombButtonH)
+      drawButton("ready!", "green", bombButtonX, bombButtonY, bombButtonW, bombButtonH)
     }
 
 }
@@ -155,7 +158,7 @@ function gameState3() {
    text("Player 2 press Begin! to place your bombs!", gridX/2, gridY/3);
    text("You have 30 seconds!", gridX/2, gridY/3 + 30);
    
-   drawButton("Begin!", "red", beginButtonX, beginButtonY, beginButtonW, beginButtonH)
+   drawButton("Begin!", "green", beginButtonX, beginButtonY, beginButtonW, beginButtonH)
 }
 
 function gameState4() {
@@ -167,7 +170,7 @@ function gameState4() {
     if(bombsLeft > 0) {
       drawButton("Placing!", "grey", bombButtonX, bombButtonY, bombButtonW, bombButtonH)
     } else {
-      drawButton("ready!", "red", bombButtonX, bombButtonY, bombButtonW, bombButtonH)
+      drawButton("ready!", "green", bombButtonX, bombButtonY, bombButtonW, bombButtonH)
     }
 }
 
@@ -186,7 +189,6 @@ textSize(24);
 fill(0,102, 153);
 text("TIME: " + currentTime, 30, 70);
 
-
 }
 
 function timer() {
@@ -199,6 +201,14 @@ function timer() {
 function gameState6() {
   fill(255);
   text("Reach your goal!", gridX/2, gridY/3);
+  
+    //player1 
+    drawGrid();
+    drawBombs();  
+    
+    //player 2
+    drawGrid2()
+   // drawBombs2()
 }
 
 function drawButton(bText, bColor, locationX, locationY, bWidth, bHeight) {
@@ -239,7 +249,7 @@ function mouseReleased() {
   }
   if((gameState == 2 | gameState == 4) && mouseX > bombButtonX && 
   mouseX < bombButtonX + bombButtonW && 
-  mouseY > bombButtonY && mouseY < bombButtonY + beginButtonH) {
+  mouseY > bombButtonY && mouseY < bombButtonY + beginButtonH && bombsLeft == 0) {
     bombButtonClicked() 
   }
   if(gameState == 3 && mouseX > beginButtonX && 
@@ -306,10 +316,51 @@ function drawGrid() {
   
 }
 
+function drawGrid2() {
+    fill(255);
+    rect(gridX2, gridY2, cellSize * gridWidth, cellSize * gridHeight);
+    for(var i = 1; i < gridHeight; i++) {
+      var y = i*cellSize + gridY2;
+      line(gridX2, y, cellSize * gridWidth + gridX2, y); 
+    }
+    for(i = 1; i < gridWidth; i++) {
+      var x = i*cellSize + gridX2;
+      line(x, gridY2, x, cellSize * gridHeight + gridY2);
+    }
+  
+}
 function drawBombs() {
   if(gameState == 4) {
     bombArray = bombArray2
+  } else {
+    bombArray = bombArray1
   }
+  
+   for(var i = 0; i < gridHeight; i++) {
+      for(var j = 0; j < gridWidth; j++) {
+        if(bombArray[i][j] == 1) {
+          fill(0);
+          var bombX = j*cellSize + gridX + cellSize/2;
+          var bombY = i*cellSize + gridY + cellSize/2;
+          
+          //if(bombX == playerX && bombY == playerY) { // track a collision between a bomb and the prayer
+          //   if(bombArray[rowdex][coldex] == 1) { //erase the bomb
+          //      //if true set to false/false set to true
+          //        bombArray[rowdex][coldex] = 0;
+          //    } else {
+          //        bombArray[rowdex][coldex] = 1;
+          //    }
+          //    playerReset();
+          //} 
+          fill(0);
+          ellipse(bombX, bombY, playerSize, playerSize);
+        }
+      }
+    }
+}
+
+function drawBombs2() {
+   bombArray = bombArray2
   
    for(var i = 0; i < gridHeight; i++) {
       for(var j = 0; j < gridWidth; j++) {
